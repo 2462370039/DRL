@@ -143,3 +143,29 @@ AttributeError: Tensor.op is meaningless when eager execution is enabled.
 from tensorflow.python.framework.ops import disable_eager_execution
 disable_eager_execution()
 ```
+
+### 错误6：AttributeError: 'str' object has no attribute 'decode'
+
+<details> 
+<summary><font size="4" color="orange">报错原文</font></summary> 
+<pre><code class="language-cpp">
+Traceback (most recent call last):
+  File "e:\Coding\RL\DQN\dqn_train.py", line 17, in <module>
+    dqn.load_weights('dqn_n1_weights.h5f')
+  File "D:\Software\Coding\anaconda3\envs\tf2\lib\site-packages\rl\agents\dqn.py", line 209, in load_weights
+    self.model.load_weights(filepath)
+  File "D:\Software\Coding\anaconda3\envs\tf2\lib\site-packages\keras\engine\saving.py", line 492, in load_wrapper       
+    return load_function(*args, **kwargs)
+  File "D:\Software\Coding\anaconda3\envs\tf2\lib\site-packages\keras\engine\network.py", line 1230, in load_weights     
+    f, self.layers, reshape=reshape)
+  File "D:\Software\Coding\anaconda3\envs\tf2\lib\site-packages\keras\engine\saving.py", line 1183, in load_weights_from_hdf5_group
+    original_keras_version = f.attrs['keras_version'].decode('utf8')
+AttributeError: 'str' object has no attribute 'decode'
+</code>
+</pre> </details>
+
+解决：[参考链接](https://github.com/keras-team/keras/issues/14294 )
+```shell
+# h5py降级为2.10.0
+pip install h5py==2.10.0
+```
