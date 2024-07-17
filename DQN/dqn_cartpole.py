@@ -1,4 +1,6 @@
 # from : https://github.com/keras-rl/keras-rl/blob/master/examples/dqn_cartpole.py
+from tensorflow.python.framework.ops import disable_eager_execution
+disable_eager_execution()
 
 import numpy as np
 import gym

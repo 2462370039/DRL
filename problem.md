@@ -1,6 +1,8 @@
-#### DQN > Predator Game test.ipynb
-##### 错误1
-```
+## DQN > Predator Game test.ipynb
+### 错误1：TypeError: len is not well defined for symbolic Tensors.
+<details> 
+<summary><font size="4" color="orange">报错原文</font></summary> 
+<pre><code class="language-cpp">
 ERROR:root:Internal Python error in the inspect module.
 Below is the traceback from this internal error.
 
@@ -23,21 +25,11 @@ Traceback (most recent call last):
   File "e:\Anaconda3\envs\py36\lib\site-packages\IPython\core\interactiveshell.py", line 1806, in showtraceback
     stb = value._render_traceback_()
 AttributeError: 'TypeError' object has no attribute '_render_traceback_'
+</code>
+</pre> </details>
 
-During handling of the above exception, another exception occurred:
 
-Traceback (most recent call last):
-  File "e:\Anaconda3\envs\py36\lib\site-packages\IPython\core\ultratb.py", line 1090, in get_records
-    return _fixed_getinnerframes(etb, number_of_lines_of_context, tb_offset)
-...
-  File "<frozen importlib._bootstrap>", line 994, in _gcd_import
-  File "<frozen importlib._bootstrap>", line 971, in _find_and_load
-  File "<frozen importlib._bootstrap>", line 953, in _find_and_load_unlocked
-ModuleNotFoundError: No module named 'tensorflow_core.estimator'
-Output is truncated. View as a scrollable element or open in a text editor. Adjust cell output settings...
-```
-解决：
-[TypeError: len is not well defined for symbolic Tensors.](https://github.com/keras-rl/keras-rl/issues/348)
+解决：[参考链接](https://github.com/keras-rl/keras-rl/issues/348)
 ```python
 dqn.py 中第108行:
 if hasattr(model.output, '__len__') and len(model.output) > 1:
@@ -45,7 +37,7 @@ if hasattr(model.output, '__len__') and len(model.output) > 1:
 if hasattr(model.output, '__shape__') and len(model.output) > 1:
 ```
 
-##### 错误2
+### 错误2：ValueError: not enough values to unpack (expected 4, got 3)
 ```
   in fit observation, r, done, info = env.step(action)
 ValueError: not enough values to unpack (expected 4, got 3)
@@ -57,8 +49,11 @@ info = {'prob': 1.0}
 return new_observation, reward, done, info
 ```
 
-##### 错误3
-```
+### 错误3：TypeError: render() got an unexpected keyword argument 'mode'
+
+<details> 
+<summary><font size="4" color="orange">报错原文</font></summary> 
+<pre><code class="language-cpp">
 Traceback (most recent call last):
   File "e:\Anaconda3\envs\py36\lib\site-packages\IPython\core\interactiveshell.py", line 2862, in run_code
     exec(code_obj, self.user_global_ns, self.user_ns)
@@ -71,14 +66,19 @@ Traceback (most recent call last):
   File "e:\Anaconda3\envs\py36\lib\site-packages\rl\callbacks.py", line 366, in on_action_end
     self.env.render(mode='human')
 TypeError: render() got an unexpected keyword argument 'mode'
-```
+</code>
+</pre> </details>
+
 解决：
 ```python
 # render增加参数mode
 def render(self, mode='human'):
 ```
 
-```
+### 错误4：ModuleNotFoundError: No module named 'tensorflow_core.estimator'
+<details> 
+<summary><font size="4" color="orange">报错原文</font></summary> 
+<pre><code class="language-cpp">
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
@@ -96,54 +96,50 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 971, in _find_and_load
   File "<frozen importlib._bootstrap>", line 953, in _find_and_load_unlocked
 ModuleNotFoundError: No module named 'tensorflow_core.estimator'
+</code>
+</pre> </details>
+
+解决
+```
+重新安装tensorflow-estimator，保证与tensorflow版本一致
 ```
 
-
-```
-# tensorflow
-AttributeError                            Traceback (most recent call last)
-Cell In[8], line 1
-----> 1 dqn = build_agent(model, env.ACTION_SPACE_VALUES)
-
-Cell In[6], line 6
-      4 memory = SequentialMemory(limit=50000, window_length=1) # window_length 窗口值，应该与model输入层的（1,)对应，即输入样本数对应
-      5 policy = BoltzmannQPolicy() # 玻尔兹曼策略
-----> 6 dqn = DQNAgent(model=model, nb_actions=nb_actions, memory=memory, nb_steps_warmup=1000, 
-      7                target_model_update=1e-2, policy=policy)
-      8 dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-      9 return dqn
-
-File e:\Anaconda3\envs\tensorflow\lib\site-packages\rl\agents\dqn.py:110, in DQNAgent.__init__(self, model, policy, test_policy, enable_double_dqn, enable_dueling_network, dueling_type, *args, **kwargs)
-    108 if hasattr(model.output, '__shape__') and len(model.output) > 1:
-    109     raise ValueError('Model "{}" has more than one output. DQN expects a model that has a single output.'.format(model))
---> 110 if model.output._keras_shape != (None, self.nb_actions):
-    111     raise ValueError('Model output "{}" has invalid shape. DQN expects a model that has one dimension for each action, in this case {}.'.format(model.output, self.nb_actions))
-    113 # Parameters.
-
-AttributeError: 'Tensor' object has no attribute '_keras_shape'
-```
-
-```
-# tensorflow1.14
+### 错误5：AttributeError: Tensor.op is meaningless when eager execution is enabled.
+<details> 
+<summary><font size="4" color="orange">报错原文</font></summary> 
+<pre><code class="language-cpp">
 Traceback (most recent call last):
-  File "F:\Coding\paperCoding\test\t.py", line 254, in <module>
-    dqn.fit(env, nb_steps=100000, visualize=False, verbose=1)
-  File "E:\Anaconda3\envs\tensorflow1.14\lib\site-packages\rl\core.py", line 194, in fit
+  File "f:/Coding/paperCoding/RL/DQN/dqn_cartpole.py", line 50, in <module>
+    dqn.fit(env, nb_steps=50000, visualize=True, verbose=2)
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\rl\core.py", line 194, in fit
     metrics = self.backward(reward, terminal=done)
-  File "E:\Anaconda3\envs\tensorflow1.14\lib\site-packages\rl\agents\dqn.py", line 284, in backward
-    q_values = self.model.predict_on_batch(state1_batch)
-  File "E:\Anaconda3\envs\tensorflow1.14\lib\site-packages\keras\engine\training.py", line 1580, in predict_on_batch
-    outputs = self.predict_function(ins)
-  File "E:\Anaconda3\envs\tensorflow1.14\lib\site-packages\tensorflow\python\keras\backend.py", line 3292, in __call__
-    run_metadata=self.run_metadata)
-  File "E:\Anaconda3\envs\tensorflow1.14\lib\site-packages\tensorflow\python\client\session.py", line 1458, in __call__
-    run_metadata_ptr)
-tensorflow.python.framework.errors_impl.InternalError: 2 root error(s) found.
-  (0) Internal: Blas GEMM launch failed : a.shape=(32, 4), b.shape=(4, 32), m=32, n=32, k=4
-	 [[{{node dense_1/MatMul}}]]
-	 [[dense_3/BiasAdd/_109]]
-  (1) Internal: Blas GEMM launch failed : a.shape=(32, 4), b.shape=(4, 32), m=32, n=32, k=4
-	 [[{{node dense_1/MatMul}}]]
-0 successful operations.
-0 derived errors ignored.
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\rl\agents\dqn.py", line 325, in backward
+    metrics = self.trainable_model.train_on_batch(ins + [targets, masks], [dummy_targets, targets])
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\keras\engine\training.py", line 1513, in train_on_batch
+    self._make_train_function()
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\keras\engine\training.py", line 333, in _make_train_function
+    **self._function_kwargs)
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\keras\backend\tensorflow_backend.py", line 3009, in function
+    **kwargs)
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\tensorflow_core\python\keras\backend.py", line 3760, in function
+    return EagerExecutionFunction(inputs, outputs, updates=updates, name=name)
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\tensorflow_core\python\keras\backend.py", line 3657, in __init__
+    base_graph=source_graph)
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\tensorflow_core\python\eager\lift_to_graph.py", line 260, in lift_to_graph
+    add_sources=add_sources))
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\tensorflow_core\python\ops\op_selector.py", line 393, in map_subgraph
+    ops_to_visit = [_as_operation(init_tensor)]
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\tensorflow_core\python\ops\op_selector.py", line 320, in _as_operation
+    return op_or_tensor.op
+  File "E:\Anaconda3\envs\tf2.1\lib\site-packages\tensorflow_core\python\framework\ops.py", line 1094, in op
+    "Tensor.op is meaningless when eager execution is enabled.")
+AttributeError: Tensor.op is meaningless when eager execution is enabled.
+</code>
+</pre> </details>
+
+解决
+```python
+# 添加
+from tensorflow.python.framework.ops import disable_eager_execution
+disable_eager_execution()
 ```
